@@ -208,7 +208,7 @@ function RegistrationForm() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Degree</label>
                   <div className="flex gap-4">
-                    {['BTech', 'MCA/Mtech/PHD', 'Other'].map((option) => (
+                    {['BTech', 'MCA/Mtech/PHD/Other'].map((option) => (
                       <label key={option} className="flex items-center gap-2 cursor-pointer group">
                         <div
                           className="w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors group-hover:border-red-500"
