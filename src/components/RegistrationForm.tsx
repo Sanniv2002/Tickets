@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ChevronDown, Radio, ArrowRight } from 'lucide-react';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ const formSchema = z.object({
 
 function RegistrationForm() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(JSON.parse(localStorage.getItem("user-state") as string) || {
     name: '',
     email: '',
     rollNumber: '',
@@ -31,6 +31,12 @@ function RegistrationForm() {
     branchOther: '',
   });
 
+  console.log(formData)
+
+  useEffect(() => {
+    localStorage.setItem("user-state", JSON.stringify(formData));
+  }, [formData]);  
+
   const generateTicketNumber = () => {
     return 'TEDx-' + Math.random().toString(36).substring(2, 8).toUpperCase();
   };
@@ -41,7 +47,7 @@ function RegistrationForm() {
     try {
       formSchema.parse(formData);
       const ticketNumber = generateTicketNumber();
-      navigate('/ticket', { 
+      navigate('/payment', { 
         state: { 
           name: formData.name,
           email: formData.email,
@@ -295,11 +301,6 @@ function RegistrationForm() {
                     <p className="text-2xl font-bold">₹100</p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/2560px-UPI-Logo-vector.svg.png"
-                      alt="UPI"
-                      className="h-8 opacity-50 hover:opacity-100 transition-opacity"
-                    />
                     <Radio className="text-red-600" />
                   </div>
                 </div>

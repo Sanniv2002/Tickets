@@ -1,8 +1,8 @@
-import React from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import RegistrationForm from './components/RegistrationForm';
 import VirtualTicket from './components/VirtualTicket';
 import { Toaster } from 'react-hot-toast';
+import { PaymentPage } from './components/PaymentPage';
 
 export type TicketData = {
   name: string;
@@ -20,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RegistrationForm />} />
         <Route path="/ticket" element={<VirtualTicket />} />
+        <Route path="/payment" element={<PaymentPage />} />
       </Routes>
     </div>
   );
