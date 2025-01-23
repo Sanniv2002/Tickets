@@ -49,7 +49,7 @@ function ThankYouPage() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => navigate('/ticket')}
+          onClick={() => navigate('/')}
           className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 w-full transition-colors"
         >
           Fill another resposne
