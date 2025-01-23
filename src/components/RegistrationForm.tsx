@@ -4,6 +4,7 @@ import { Sparkles, ChevronDown, Radio, ArrowRight } from 'lucide-react';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import LoadingOverlay from './LoadingOverlay';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -19,6 +20,7 @@ const formSchema = z.object({
 
 function RegistrationForm() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(JSON.parse(localStorage.getItem("user-state") as string) || {
     name: '',
     email: '',
@@ -31,24 +33,25 @@ function RegistrationForm() {
     branchOther: '',
   });
 
-  console.log(formData)
-
   useEffect(() => {
     localStorage.setItem("user-state", JSON.stringify(formData));
-  }, [formData]);  
+  }, [formData]);
 
   const generateTicketNumber = () => {
     return 'TEDx-' + Math.random().toString(36).substring(2, 8).toUpperCase();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       formSchema.parse(formData);
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 6000));
       const ticketNumber = generateTicketNumber();
-      navigate('/payment', { 
-        state: { 
+      setIsLoading(false);
+      navigate('/payment', {
+        state: {
           name: formData.name,
           email: formData.email,
           ticketNumber,
@@ -73,16 +76,16 @@ function RegistrationForm() {
     }
   };
 
-  const CustomSelect = ({ 
-    value, 
-    onChange, 
-    options, 
-    placeholder 
-  }: { 
-    value: string; 
-    onChange: (value: string) => void; 
-    options: string[]; 
-    placeholder: string; 
+  const CustomSelect = ({
+    value,
+    onChange,
+    options,
+    placeholder
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    options: string[];
+    placeholder: string;
   }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -131,6 +134,9 @@ function RegistrationForm() {
 
   return (
     <>
+      <AnimatePresence>
+        {isLoading && <LoadingOverlay />}
+      </AnimatePresence>
       {/* Animated Background */}
       <div className="fixed inset-0">
         <motion.div

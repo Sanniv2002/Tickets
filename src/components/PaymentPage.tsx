@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function PaymentPage() {
     const [paymentProof, setPaymentProof] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string>('');
-    const [_, setShowTicket] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -34,7 +36,7 @@ export function PaymentPage() {
             alert('Please upload payment proof');
             return;
         }
-        setShowTicket(true);
+        navigate('/success')
     };
 
     return (
@@ -117,7 +119,7 @@ export function PaymentPage() {
                                 : 'bg-gray-600 cursor-not-allowed text-gray-300'
                                 }`}
                         >
-                            Verify Payment & Generate Ticket
+                            Submit
                         </button>
                     </div>
                 </div>
