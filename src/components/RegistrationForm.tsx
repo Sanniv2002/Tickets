@@ -5,6 +5,7 @@ import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import LoadingOverlay from './LoadingOverlay';
+import axios from 'axios';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -17,6 +18,8 @@ const formSchema = z.object({
   branch: z.string().min(1, 'Please select a branch'),
   branchOther: z.string().optional(),
 });
+
+const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL || ''
 
 function RegistrationForm() {
   const navigate = useNavigate();
@@ -37,29 +40,15 @@ function RegistrationForm() {
     localStorage.setItem("user-state", JSON.stringify(formData));
   }, [formData]);
 
-  const generateTicketNumber = () => {
-    return 'TEDx-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       formSchema.parse(formData);
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 6000));
-      const ticketNumber = generateTicketNumber();
+      const result = await axios.post(`${BASE_URL}/api/v1/save-progress`, formData);
+      localStorage.setItem('current-id', result.data.id);
       setIsLoading(false);
-      navigate('/payment', {
-        state: {
-          name: formData.name,
-          email: formData.email,
-          ticketNumber,
-          degree: formData.degree,
-          year: formData.year === 'Other' ? formData.yearOther : formData.year,
-          branch: formData.branch === 'Other' ? formData.branchOther : formData.branch,
-        }
-      });
+      navigate(`/payment?ref=${result.data.id}`);
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
