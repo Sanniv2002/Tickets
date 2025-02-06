@@ -21,9 +21,17 @@ const formSchema = z.object({
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL || ''
 
+type OfferData = {
+  _id: { $oid: string };
+  offer: string;
+  active: boolean;
+  price: string;
+};
+
 function RegistrationForm() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [offerData, setOfferData] = useState<OfferData | null>(null);
   const [formData, setFormData] = useState(JSON.parse(localStorage.getItem("user-state") as string) || {
     name: '',
     email: '',
@@ -39,6 +47,26 @@ function RegistrationForm() {
   useEffect(() => {
     localStorage.setItem("user-state", JSON.stringify(formData));
   }, [formData]);
+
+  useEffect(() => {
+    const fetchOffer = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/offers/current`);
+        setOfferData(response.data);
+      } catch (error) {
+        console.error('Failed to fetch offer:', error);
+        toast.error('Failed to fetch ticket price', {
+          style: {
+            background: '#ef4444',
+            color: '#fff',
+            borderRadius: '10px',
+          },
+          icon: '⚠️',
+        });
+      }
+    };
+    fetchOffer();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -234,54 +262,18 @@ function RegistrationForm() {
                   <CustomSelect
                     value={formData.year}
                     onChange={(value) => setFormData({ ...formData, year: value })}
-                    options={['1st', '2nd', '3rd', '4th', 'Other']}
+                    options={['1st', '2nd', '3rd', '4th', 'NA']}
                     placeholder="Select Year"
                   />
-                  <AnimatePresence>
-                    {formData.year === 'Other' && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <input
-                          type="text"
-                          placeholder="Specify your year"
-                          className="mt-2 w-full bg-white/5 rounded-lg border border-gray-600 px-4 py-2.5 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                          value={formData.yearOther}
-                          onChange={(e) => setFormData({ ...formData, yearOther: e.target.value })}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-2">Branch</label>
                   <CustomSelect
                     value={formData.branch}
                     onChange={(value) => setFormData({ ...formData, branch: value })}
-                    options={['Electrical', 'Civil', 'AI/ML', 'MNC', 'MBA', 'MCA', 'ECE', 'Other']}
+                    options={['Electrical', 'Civil', 'AI/ML', 'MNC', 'MBA', 'MCA', 'ECE', 'NA']}
                     placeholder="Select Branch"
                   />
-                  <AnimatePresence>
-                    {formData.branch === 'Other' && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <input
-                          type="text"
-                          placeholder="Specify your branch"
-                          className="mt-2 w-full bg-white/5 rounded-lg border border-gray-600 px-4 py-2.5 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                          value={formData.branchOther}
-                          onChange={(e) => setFormData({ ...formData, branchOther: e.target.value })}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
               </div>
             </div>
@@ -291,9 +283,14 @@ function RegistrationForm() {
               <h3 className="text-xl font-semibold text-red-400">Payment Details</h3>
               <div className="bg-white/5 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div>
+                  <div className="space-y-2">
                     <p className="text-gray-300">Ticket Price</p>
-                    <p className="text-2xl font-bold">₹100</p>
+                    <div>
+                      <p className="text-2xl font-bold">₹{offerData?.price || '...'}</p>
+                      {offerData?.offer && (
+                        <p className="text-sm text-red-400">{offerData.offer} Offer</p>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Radio className="text-red-600" />
