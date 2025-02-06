@@ -51,7 +51,7 @@ function RegistrationForm() {
   useEffect(() => {
     const fetchOffer = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/v1/offers/current`);
+        const response = await axios.get(`${BASE_URL}/offers/current`);
         setOfferData(response.data);
       } catch (error) {
         console.error('Failed to fetch offer:', error);
@@ -283,14 +283,23 @@ function RegistrationForm() {
               <h3 className="text-xl font-semibold text-red-400">Payment Details</h3>
               <div className="bg-white/5 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="space-y-2">
-                    <p className="text-gray-300">Ticket Price</p>
-                    <div>
-                      <p className="text-2xl font-bold">₹{offerData?.price || '...'}</p>
+                  <div className="relative">
+                    <div className="flex items-center gap-2">
+                      <p className="text-gray-300">Ticket Price</p>
                       {offerData?.offer && (
-                        <p className="text-sm text-red-400">{offerData.offer} Offer</p>
+                        <div className="relative">
+                          {/* Price Tag */}
+                          <div className="relative bg-red-600 text-white px-3 py-1 text-xs font-medium rounded-r-lg before:content-[''] before:absolute before:left-0 before:top-full before:border-t-[5px] before:border-t-red-800 before:border-l-[5px] before:border-l-transparent">
+                            {/* Hole */}
+                            <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-black rounded-full" />
+                            {offerData.offer}
+                          </div>
+                          {/* Ribbon */}
+                          <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-red-400 to-red-600 -skew-y-45" />
+                        </div>
                       )}
                     </div>
+                    <p className="text-2xl font-bold mt-2">₹{offerData?.price || '...'}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <Radio className="text-red-600" />
