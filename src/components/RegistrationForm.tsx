@@ -51,7 +51,7 @@ function RegistrationForm() {
   useEffect(() => {
     const fetchOffer = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/offers/current`);
+        const response = await axios.get(`${BASE_URL}/api/v1/offers/current`);
         setOfferData(response.data);
       } catch (error) {
         console.error('Failed to fetch offer:', error);
