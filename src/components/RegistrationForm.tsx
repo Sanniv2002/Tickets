@@ -28,6 +28,21 @@ type OfferData = {
   price: string;
 };
 
+const BRANCHES = [
+  'Computer Science',
+  'Information Technology',
+  'Mechanical',
+  'Civil',
+  'PIE',
+  'Electrical',
+  'AI/ML',
+  'MNC',
+  'MBA',
+  'MCA',
+  'ECE',
+  'NA'
+];
+
 function RegistrationForm() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -124,7 +139,7 @@ function RegistrationForm() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden"
+              className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl max-h-60 overflow-y-auto"
             >
               {options.map((option) => (
                 <motion.div
@@ -266,14 +281,33 @@ function RegistrationForm() {
                     placeholder="Select Year"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 space-y-4">
                   <label className="block text-sm font-medium mb-2">Branch</label>
                   <CustomSelect
                     value={formData.branch}
-                    onChange={(value) => setFormData({ ...formData, branch: value })}
-                    options={['Electrical', 'Civil', 'AI/ML', 'MNC', 'MBA', 'MCA', 'ECE', 'NA']}
+                    onChange={(value) => setFormData({ ...formData, branch: value, branchOther: value === 'NA' ? '' : undefined })}
+                    options={BRANCHES}
                     placeholder="Select Branch"
                   />
+                  
+                  <AnimatePresence>
+                    {formData.branch === 'NA' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <input
+                          type="text"
+                          placeholder="Enter your branch"
+                          className="w-full bg-white/5 rounded-lg border border-gray-600 px-4 py-2.5 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                          value={formData.branchOther || ''}
+                          onChange={(e) => setFormData({ ...formData, branchOther: e.target.value })}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
