@@ -37,10 +37,8 @@ const BRANCHES = [
   'Electrical',
   'AI/ML',
   'MNC',
-  'MBA',
-  'MCA',
   'ECE',
-  'NA'
+  'Other'
 ];
 
 function RegistrationForm() {
@@ -285,13 +283,13 @@ function RegistrationForm() {
                   <label className="block text-sm font-medium mb-2">Branch</label>
                   <CustomSelect
                     value={formData.branch}
-                    onChange={(value) => setFormData({ ...formData, branch: value, branchOther: value === 'NA' ? '' : undefined })}
+                    onChange={(value) => setFormData({ ...formData, branch: value, branchOther: value === 'Other' ? '' : undefined })}
                     options={BRANCHES}
                     placeholder="Select Branch"
                   />
                   
                   <AnimatePresence>
-                    {formData.branch === 'NA' && (
+                    {formData.branch === 'Other' && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}

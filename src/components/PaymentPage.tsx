@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -9,13 +9,42 @@ import LoadingOverlay from './LoadingOverlay';
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL || ''
 
+type OfferData = {
+    _id: { $oid: string };
+    offer: string;
+    active: boolean;
+    price: string;
+  };
+  
+
 export function PaymentPage() {
     const [paymentProof, setPaymentProof] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
+    const [offerData, setOfferData] = useState<OfferData | null>(null);
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        const fetchOffer = async () => {
+          try {
+            const response = await axios.get(`${BASE_URL}/api/v1/offers/current`);
+            setOfferData(response.data);
+          } catch (error) {
+            console.error('Failed to fetch offer:', error);
+            toast.error('Failed to fetch ticket price', {
+              style: {
+                background: '#ef4444',
+                color: '#fff',
+                borderRadius: '10px',
+              },
+              icon: '⚠️',
+            });
+          }
+        };
+        fetchOffer();
+      }, []);
 
     // Extracting query params (e.g., `id`)
     const queryParams = new URLSearchParams(location.search);
@@ -120,15 +149,16 @@ export function PaymentPage() {
                     <div className="space-y-6">
                         <div className="bg-white p-6 rounded-lg flex items-center justify-center">
                             <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                                src="./image.png"
                                 alt="Payment QR Code"
-                                className="w-48 h-48"
+                                className=""
                             />
                         </div>
 
                         <div className="text-center space-y-2">
-                            <p className="text-lg font-semibold">UPI ID: tedx@okaxis</p>
-                            <p className="text-sm text-gray-400">Scan QR code or use UPI ID to pay ₹100</p>
+                            <p className="text-lg font-semibold">UPI ID: 9382655006@ptsbi</p>
+                            <p className="text-sm text-gray-400">Scan QR code or use UPI ID to pay ₹{offerData?.price}</p>
+                            {/* <p className="text-sm text-gray-400">Contact 9382655006 for any discrepancy</p> */}
                         </div>
 
                         <div className="border-t border-gray-800 pt-6">
